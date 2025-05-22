@@ -45,6 +45,7 @@ gem "bootsnap", require: false
 # gem "image_processing", "~> 1.2"
 
 gem 'devise'
+gem 'devise-i18n'
 
 gem 'haml-rails'
 gem 'erb2haml'
@@ -65,6 +66,9 @@ group :development do
   # gem "spring"
 
   gem "error_highlight", ">= 0.4.0", platforms: [:ruby]
+
+  gem 'letter_opener'
+  gem 'letter_opener_web'
 end
 
 group :test do

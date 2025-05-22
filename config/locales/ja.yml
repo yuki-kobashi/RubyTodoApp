@@ -1,0 +1,68 @@
+ja:
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            name:
+              blank: "を入力してください"
+              too_short: "は%{count}文字以上で入力してください"
+              too_long: "は%{count}文字以下で入力してください"
+              invalid: "は不正な値です"
+              format: "は半角英数字、ドット(.)、アンダーバー(_)、または日本語のみ使用できます"
+      messages:
+        blank: "を入力してください"
+        too_short: "は%{count}文字以上で入力してください"
+        too_long: "は%{count}文字以下で入力してください"
+        invalid: "は不正な値です"
+  errors:
+    attributes:
+      name:
+        blank: "を入力してください"
+        too_short: "は%{count}文字以上で入力してください"
+        too_long: "は%{count}文字以下で入力してください"
+        invalid: "は不正な値です"
+    messages:
+      blank: "を入力してください"
+      too_short: "は%{count}文字以上で入力してください"
+      too_long: "は%{count}文字以下で入力してください" 
+      invalid: "は不正な値です"
+  devise:
+    failure:
+      invalid: "Eメールまたはパスワードが正しくありません。"
+      not_found_in_database: "Eメールまたはパスワードが正しくありません。"
+      unauthenticated: "続けるにはログインまたはアカウント登録が必要です。"
+    registrations:
+      signed_up: "アカウント登録が完了しました。"
+    sessions:
+      signed_in: "ログインしました。"
+      signed_out: "ログアウトしました。"
+    mailer:
+      confirmation_instructions:
+        subject: "アカウントの確認手順"
+      reset_password_instructions:
+        subject: "パスワードの再設定手順"
+      unlock_instructions:
+        subject: "アカウントのロック解除手順"
+  devise.registrations:
+    user:
+      signed_up: "アカウント登録が完了しました。"
+  simple_form:
+    error_notification:
+      default_message: "以下の問題を確認してください："
+    "yes": 'はい'
+    "no": 'いいえ'
+    required:
+      text: '必須'
+      mark: '*'
+    labels:
+      user:
+        email: "Eメール"
+        password: "パスワード"
+        password_confirmation: "パスワード（確認）"
+        remember_me: "ログイン情報を記憶する"
+        name: "名前"
+    hints:
+      user:
+        password: "%{count}文字以上で入力してください"
+        name: "4～20文字の半角英数字、ドット(.)、アンダーバー(_)、または日本語のみ使用できます"
