@@ -38,16 +38,22 @@
                       %small{style: "color: #689F38;"}
                         🕒 作成日: #{todo.created_at.strftime('%Y年%m月%d日 %H:%M')}
                     
-                  %div.todo-status.ms-3
-                    - if todo.completed?
-                      %span.badge.rounded-pill.px-3.py-2{style: "background: linear-gradient(45deg, #4CAF50, #8BC34A); color: white; font-size: 0.9rem;"}
-                        ✅ 完了
-                    - else
-                      %span.badge.rounded-pill.px-3.py-2{style: "background: linear-gradient(45deg, #CDDC39, #8BC34A); color: #2E7D32; font-size: 0.9rem;"}
-                        ⏳ 未完了
+                  %div.todo-actions.ms-3.d-flex.flex-column.align-items-end
+                    // ステータスバッジ
+                    %div.mb-2
+                      - if todo.completed?
+                        %span.badge.rounded-pill.px-3.py-2{style: "background: linear-gradient(45deg, #4CAF50, #8BC34A); color: white; font-size: 0.9rem;"}
+                          ✅ 完了
+                      - else
+                        %span.badge.rounded-pill.px-3.py-2{style: "background: linear-gradient(45deg, #CDDC39, #8BC34A); color: #2E7D32; font-size: 0.9rem;"}
+                          ⏳ 未完了
+                    
+                    %div.action-buttons
+                      = button_to "🗑️ 削除", todo_path(todo), method: :delete, class: "btn btn-sm px-3 py-1", style: "background: linear-gradient(45deg, #f44336, #d32f2f); border: none; color: white; border-radius: 15px; font-size: 0.85rem; transition: all 0.3s ease;", data: { confirm: "「#{todo.title}」を削除してもよろしいですか？\n\nこの操作は取り消せません。", turbo_method: :delete }
+
 
       - else
-        -# Todoがない場合の表示
+        // Todoがない場合の表示
         %div.text-center.py-5
           %div.mb-4
             %div{style: "font-size: 4rem; opacity: 0.3; color: #8BC34A;"}
@@ -80,6 +86,37 @@
       box-shadow: 0 6px 20px rgba(139, 195, 74, 0.4) !important;
     }
     
+    /* 削除ボタン専用スタイル */
+    .delete-btn {
+      background: linear-gradient(45deg, #f44336, #d32f2f) !important;
+      border: none !important;
+      color: white !important;
+      border-radius: 15px !important;
+      font-size: 0.85rem !important;
+      transition: all 0.3s ease !important;
+      min-width: 80px !important;
+      font-weight: 500 !important;
+    }
+    
+    .delete-btn:hover {
+      background: linear-gradient(45deg, #d32f2f, #b71c1c) !important;
+      transform: translateY(-2px) !important;
+      box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4) !important;
+      color: white !important;
+    }
+    
+    .delete-btn:focus {
+      background: linear-gradient(45deg, #d32f2f, #b71c1c) !important;
+      color: white !important;
+      box-shadow: 0 0 0 0.25rem rgba(244, 67, 54, 0.25) !important;
+    }
+    
+    /* button_toで生成されるformのスタイル調整 */
+    .action-buttons form {
+      display: inline-block !important;
+      margin: 0 !important;
+    }
+    
     .badge {
       font-weight: 500;
       letter-spacing: 0.5px;
@@ -87,4 +124,14 @@
     
     .todo-title {
       letter-spacing: 0.3px;
+    }
+    
+    .todo-actions {
+      min-width: 120px;
+    }
+    
+    .action-buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: end;
     }
