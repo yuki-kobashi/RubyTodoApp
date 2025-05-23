@@ -5,41 +5,65 @@
         🌿 Todoリスト
       %p.lead{style: "color: #689F38;"}
 
-    //Todo一覧表示部分
+    / Todo一覧表示部分
     %div.mt-5
-      %div.d-flex.justify-content-between.align-items-center.mb-4
+      / 統計情報とフィルター切り替え
+      %div.d-flex.justify-content-between.align-items-center.mb-4.flex-wrap
         %h2{style: "color: #388E3C; margin: 0;"}
           📝 あなたのTodo一覧
-        %div
-          %span.badge.rounded-pill.px-3.py-2{style: "background: linear-gradient(45deg, #8BC34A, #4CAF50); color: white; font-size: 1rem;"}
-            全 #{@todos.count} 件
-
-      //Todoが存在するかチェック
-      - if @todos.any?
         
+        / 統計バッジエリア
+        %div.d-flex.align-items-center.gap-2.flex-wrap
+          %span.badge.rounded-pill.px-3.py-2{style: "background: linear-gradient(45deg, #8BC34A, #4CAF50); color: white; font-size: 0.9rem;"}
+            全 #{@total_count} 件
+          %span.badge.rounded-pill.px-3.py-2{style: "background: linear-gradient(45deg, #4CAF50, #2E7D32); color: white; font-size: 0.9rem;"}
+            完了 #{@completed_count} 件
+          %span.badge.rounded-pill.px-3.py-2{style: "background: linear-gradient(45deg, #CDDC39, #8BC34A); color: #2E7D32; font-size: 0.9rem;"}
+            未完了 #{@pending_count} 件
+      
+      / フィルター切り替えエリア
+      %div.card.mb-4{style: "background: linear-gradient(135deg, rgba(139, 195, 74, 0.1), rgba(76, 175, 80, 0.1)); border: 1px solid #8BC34A;"}
+        .card-body.py-3
+          %div.d-flex.justify-content-between.align-items-center
+            %div.d-flex.align-items-center
+              %span{style: "color: #388E3C; font-weight: 500; margin-right: 1rem;"}
+                🔍 表示設定:
+              %div.form-check.form-switch
+                %input.form-check-input{type: "checkbox", id: "showCompletedSwitch", checked: @show_completed, onchange: "toggleCompletedDisplay(this.checked)"}
+                %label.form-check-label{for: "showCompletedSwitch", style: "color: #558B2F; font-weight: 500;"}
+                  完了済みも表示
+            
+            %div
+              %small{style: "color: #689F38;"}
+                - if @show_completed
+                  すべてのTodoを表示中
+                - else
+                  未完了のTodoのみ表示中
+
+      / Todoが存在するかチェック
+      - if @todos.any?
         %div.todo-list
           - @todos.each do |todo|
-            %div.todo-item.mb-3{style: "background: white; border-left: 5px solid #8BC34A; box-shadow: 0 4px 12px rgba(139, 195, 74, 0.15); transition: all 0.3s ease;"}
+            / 完了状態に応じたCSSクラスを適用
+            - todo_class = todo.completed? ? "todo-item completed mb-3 todo-completed" : "todo-item pending mb-3 todo-pending"
+            
+            %div{class: todo_class, style: "box-shadow: 0 4px 12px rgba(139, 195, 74, 0.15); transition: all 0.3s ease;"}
               .card-body.p-4
                 %div.d-flex.justify-content-between.align-items-start
                   %div.todo-content.flex-grow-1
-                    %h5.todo-title.mb-2{style: "color: #2E7D32; font-weight: 600;"}
-                      - if todo.completed?
-                        %span{style: "text-decoration: line-through; opacity: 0.7;"}
-                          = todo.title
-                      - else
-                        = todo.title
+                    %h5.todo-title.mb-2{style: "font-weight: 600;"}
+                      = todo.title
                     
                     - if todo.description.present?
-                      %p.todo-description.mb-3{style: "color: #558B2F; line-height: 1.6;"}
+                      %p.todo-description.mb-3{style: "line-height: 1.6;"}
                         = todo.short_description
                     
                     %div.todo-meta
-                      %small{style: "color: #689F38;"}
+                      %small
                         🕒 作成日: #{todo.created_at.strftime('%Y年%m月%d日 %H:%M')}
-                    
+                  
                   %div.todo-actions.ms-3.d-flex.flex-column.align-items-end
-                    // ステータスバッジ
+                    / ステータスバッジ
                     %div.mb-2
                       - if todo.completed?
                         %span.badge.rounded-pill.px-3.py-2{style: "background: linear-gradient(45deg, #4CAF50, #8BC34A); color: white; font-size: 0.9rem;"}
@@ -48,12 +72,21 @@
                         %span.badge.rounded-pill.px-3.py-2{style: "background: linear-gradient(45deg, #CDDC39, #8BC34A); color: #2E7D32; font-size: 0.9rem;"}
                           ⏳ 未完了
                     
-                    %div.action-buttons
-                      = button_to "🗑️ 削除", todo_path(todo), method: :delete, class: "btn btn-sm px-3 py-1", style: "background: linear-gradient(45deg, #f44336, #d32f2f); border: none; color: white; border-radius: 15px; font-size: 0.85rem; transition: all 0.3s ease;", data: { confirm: "「#{todo.title}」を削除してもよろしいですか？\n\nこの操作は取り消せません。", turbo_method: :delete }
-
+                    / アクションボタンエリア
+                    %div.action-buttons.d-flex.gap-1.flex-column
+                      / 完了状態切り替えボタン
+                      = button_to toggle_complete_todo_path(todo), method: :patch, class: "btn btn-sm toggle-btn mb-1", params: { show_completed: @show_completed } do
+                        - if todo.completed?
+                          ↩️ 未完了に戻す
+                        - else
+                          ✅ 完了にする
+                      
+                      / 削除ボタン（修正版）
+                      = button_to todo_path(todo), method: :delete, class: "btn btn-sm delete-btn", data: { confirm: "「#{todo.title}」を削除してもよろしいですか？\n\nこの操作は取り消せません。" }, params: { show_completed: @show_completed } do
+                        🗑️ 削除
 
       - else
-        // Todoがない場合の表示
+        / Todoがない場合の表示
         %div.text-center.py-5
           %div.mb-4
             %div{style: "font-size: 4rem; opacity: 0.3; color: #8BC34A;"}
@@ -64,7 +97,7 @@
             %p.mb-0{style: "color: #558B2F;"}
               新しいTodoを作成して、素敵な一日を始めましょう！
 
-    //新規作成ボタンエリア
+    / 新規作成ボタンエリア
     %div.mt-5.text-center
       %div.p-4.rounded{style: "background: linear-gradient(135deg, rgba(139, 195, 74, 0.1), rgba(76, 175, 80, 0.1)); border: 2px dashed #8BC34A;"}
         %h4{style: "color: #388E3C; margin-bottom: 1rem;"}
@@ -74,64 +107,6 @@
         = link_to new_todo_path, class: "btn btn-lg px-4 py-2", style: "background: linear-gradient(45deg, #8BC34A, #4CAF50); border: none; color: white; border-radius: 25px; box-shadow: 0 4px 15px rgba(139, 195, 74, 0.3); transition: all 0.3s ease; text-decoration: none;" do
           🌿 新しいTodoを作成する
 
-%style
-  :css
-    .todo-item:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(139, 195, 74, 0.25) !important;
-    }
-    
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(139, 195, 74, 0.4) !important;
-    }
-    
-    /* 削除ボタン専用スタイル */
-    .delete-btn {
-      background: linear-gradient(45deg, #f44336, #d32f2f) !important;
-      border: none !important;
-      color: white !important;
-      border-radius: 15px !important;
-      font-size: 0.85rem !important;
-      transition: all 0.3s ease !important;
-      min-width: 80px !important;
-      font-weight: 500 !important;
-    }
-    
-    .delete-btn:hover {
-      background: linear-gradient(45deg, #d32f2f, #b71c1c) !important;
-      transform: translateY(-2px) !important;
-      box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4) !important;
-      color: white !important;
-    }
-    
-    .delete-btn:focus {
-      background: linear-gradient(45deg, #d32f2f, #b71c1c) !important;
-      color: white !important;
-      box-shadow: 0 0 0 0.25rem rgba(244, 67, 54, 0.25) !important;
-    }
-    
-    /* button_toで生成されるformのスタイル調整 */
-    .action-buttons form {
-      display: inline-block !important;
-      margin: 0 !important;
-    }
-    
-    .badge {
-      font-weight: 500;
-      letter-spacing: 0.5px;
-    }
-    
-    .todo-title {
-      letter-spacing: 0.3px;
-    }
-    
-    .todo-actions {
-      min-width: 120px;
-    }
-    
-    .action-buttons {
-      display: flex;
-      flex-direction: column;
-      align-items: end;
-    }
+/ CSS と JavaScript を外部ファイルで読み込み
+= stylesheet_link_tag 'todos', 'data-turbo-track': 'reload'
+= javascript_include_tag 'todos', 'data-turbo-track': 'reload'

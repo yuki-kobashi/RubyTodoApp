@@ -1,0 +1,149 @@
+// Todo一覧ページ専用スタイル
+
+// ===== 完了状態のスタイル定義 =====
+.todo-completed {
+  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%) !important;
+  border-left: 5px solid #9E9E9E !important;
+  
+  .todo-title {
+    color: #757575 !important;
+    text-decoration: line-through;
+  }
+  
+  .todo-description {
+    color: #9E9E9E !important;
+    text-decoration: line-through;
+  }
+  
+  .todo-meta small {
+    color: #BDBDBD !important;
+  }
+  
+  &:hover {
+    box-shadow: 0 8px 25px rgba(158, 158, 158, 0.25) !important;
+  }
+}
+
+// ===== 未完了状態のスタイル定義 =====
+.todo-pending {
+  background: white !important;
+  border-left: 5px solid #8BC34A !important;
+  
+  .todo-title {
+    color: #2E7D32 !important;
+  }
+  
+  .todo-description {
+    color: #558B2F !important;
+  }
+  
+  .todo-meta small {
+    color: #689F38 !important;
+  }
+  
+  &:hover {
+    box-shadow: 0 8px 25px rgba(139, 195, 74, 0.25) !important;
+  }
+}
+
+// ===== 基本のTodoアイテムスタイル =====
+.todo-item {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+// ===== 削除ボタン専用スタイル =====
+.delete-btn {
+  background: linear-gradient(45deg, #f44336, #d32f2f) !important;
+  border: none !important;
+  color: white !important;
+  border-radius: 15px !important;
+  font-size: 0.85rem !important;
+  transition: all 0.3s ease !important;
+  min-width: 80px !important;
+  font-weight: 500 !important;
+  
+  &:hover {
+    background: linear-gradient(45deg, #d32f2f, #b71c1c) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4) !important;
+    color: white !important;
+  }
+  
+  &:focus {
+    background: linear-gradient(45deg, #d32f2f, #b71c1c) !important;
+    color: white !important;
+    box-shadow: 0 0 0 0.25rem rgba(244, 67, 54, 0.25) !important;
+  }
+}
+
+// ===== 完了切り替えボタンスタイル =====
+.toggle-btn {
+  background: linear-gradient(45deg, #2196F3, #1976D2) !important;
+  border: none !important;
+  color: white !important;
+  border-radius: 15px !important;
+  font-size: 0.85rem !important;
+  transition: all 0.3s ease !important;
+  min-width: 120px !important;
+  font-weight: 500 !important;
+  
+  &:hover {
+    background: linear-gradient(45deg, #1976D2, #1565C0) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4) !important;
+    color: white !important;
+  }
+  
+  &:focus {
+    background: linear-gradient(45deg, #1976D2, #1565C0) !important;
+    color: white !important;
+    box-shadow: 0 0 0 0.25rem rgba(33, 150, 243, 0.25) !important;
+  }
+}
+
+// ===== その他のスタイル =====
+.form-check-input {
+  &:checked {
+    background-color: #4CAF50 !important;
+    border-color: #4CAF50 !important;
+  }
+  
+  &:focus {
+    border-color: #8BC34A !important;
+    box-shadow: 0 0 0 0.25rem rgba(139, 195, 74, 0.25) !important;
+  }
+}
+
+.action-buttons {
+  form {
+    display: inline-block !important;
+    margin: 0 !important;
+    width: 100%;
+  }
+}
+
+.badge {
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.todo-title {
+  letter-spacing: 0.3px;
+}
+
+// ===== レスポンシブ対応 =====
+@media (max-width: 768px) {
+  .todo-actions {
+    min-width: 100px;
+  }
+  
+  .toggle-btn, 
+  .delete-btn {
+    min-width: 70px !important;
+    font-size: 0.8rem !important;
+  }
+}
