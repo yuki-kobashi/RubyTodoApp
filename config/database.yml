@@ -12,11 +12,18 @@
 default: &default
   adapter: mysql2
   encoding: utf8mb4
+  charset: utf8mb4                     
+  collation: utf8mb4_unicode_ci        
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   username: root
   password: password
   host: 127.0.0.1
   port: 3306
+  # 接続時の文字セット設定を明示的に指定 
+  variables:                           
+    character_set_client: utf8mb4     
+    character_set_connection: utf8mb4  
+    character_set_results: utf8mb4     
 
 development:
   <<: *default
