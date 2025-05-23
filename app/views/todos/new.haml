@@ -1,0 +1,104 @@
+%div.container.py-4
+  %div.row.justify-content-center
+    %div.col-lg-8.col-md-10
+
+      //ページヘッダー
+      %div.text-center.mb-5
+        %h1.display-5{style: "color: #4CAF50; font-weight: bold;"}
+          ✨ 新しいTodoを作成
+        %p.lead{style: "color: #689F38;"}
+          あなたの目標や予定を記録しましょう
+
+      //フォームカード
+      %div.card{style: "border: none; box-shadow: 0 8px 25px rgba(139, 195, 74, 0.15); border-radius: 15px;"}
+        %div.card-header{style: "background: linear-gradient(45deg, #8BC34A, #4CAF50); border-radius: 15px 15px 0 0; border: none;"}
+          %h4.mb-0{style: "color: white; text-align: center;"}
+            📝 Todo情報を入力してください
+
+        %div.card-body.p-4
+          
+          //バリデーションエラー表示
+          - if @todo.errors.any?
+            %div.alert{style: "background: linear-gradient(135deg, #FFEBEE, #FFCDD2); border: 2px solid #F44336; border-radius: 10px;"}
+              %h5{style: "color: #D32F2F; margin-bottom: 1rem;"}
+                ❌ #{@todo.errors.count}件のエラーがあります
+              %ul.mb-0{style: "color: #C62828;"}
+                - @todo.errors.full_messages.each do |message|
+                  %li= message
+
+          //Todo作成フォーム
+          = form_with(model: @todo, local: true, html: { class: "needs-validation", novalidate: true }) do |form|
+            
+            //タイトル入力
+            %div.mb-4
+              = form.label :title, class: "form-label fw-bold", style: "color: #388E3C; font-size: 1.1rem;" do
+                📌 タイトル
+                %span.text-danger *
+              = form.text_field :title, 
+                  class: "form-control form-control-lg", 
+                  placeholder: "例：買い物に行く、レポートを書く",
+                  style: "border: 2px solid #E0E0E0; border-radius: 10px; transition: all 0.3s ease;",
+                  required: true,
+                  maxlength: 255
+              %div.form-text{style: "color: #689F38;"}
+                💡 255文字以内で入力してください（必須項目）
+
+            //説明入力
+            %div.mb-4
+              = form.label :description, class: "form-label fw-bold", style: "color: #388E3C; font-size: 1.1rem;" do
+                📄 説明（任意）
+              = form.text_area :description, 
+                  class: "form-control", 
+                  rows: 4,
+                  placeholder: "詳細な内容や注意事項があれば記入してください",
+                  style: "border: 2px solid #E0E0E0; border-radius: 10px; transition: all 0.3s ease;",
+                  maxlength: 1000
+              %div.form-text{style: "color: #689F38;"}
+                💡 1000文字以内で入力してください（任意項目）
+
+            //完了状態チェックボックス
+            %div.mb-4
+              %div.form-check{style: "padding-left: 2rem;"}
+                = form.check_box :completed, 
+                    class: "form-check-input", 
+                    style: "transform: scale(1.3); margin-right: 0.5rem;",
+                    id: "todo_completed"
+                = form.label :completed, 
+                    class: "form-check-label fw-bold", 
+                    for: "todo_completed",
+                    style: "color: #388E3C; font-size: 1.1rem;" do
+                  ✅ 作成時点で完了状態にする
+
+            //ボタングループ
+            %div.d-flex.gap-3.mt-5
+              = form.submit "🌿 Todoを作成する", 
+                  class: "btn btn-lg flex-fill", 
+                  style: "background: linear-gradient(45deg, #8BC34A, #4CAF50); border: none; color: white; border-radius: 25px; box-shadow: 0 4px 15px rgba(139, 195, 74, 0.3); transition: all 0.3s ease; font-weight: bold;"
+              
+              = link_to "📋 一覧に戻る", todos_path, 
+                  class: "btn btn-outline-secondary btn-lg", 
+                  style: "border: 2px solid #8BC34A; color: #4CAF50; border-radius: 25px; transition: all 0.3s ease; font-weight: bold;"
+
+//フォームの動的スタイル
+%style
+  :css
+    .form-control:focus {
+      border-color: #8BC34A !important;
+      box-shadow: 0 0 10px rgba(139, 195, 74, 0.3) !important;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(139, 195, 74, 0.4) !important;
+    }
+    
+    .btn-outline-secondary:hover {
+      background-color: #8BC34A !important;
+      border-color: #8BC34A !important;
+      color: white !important;
+    }
+    
+    .form-check-input:checked {
+      background-color: #4CAF50 !important;
+      border-color: #4CAF50 !important;
+    }
