@@ -1,17 +1,29 @@
-%h2 Log in
-= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
-  .field
-    = f.label :email
-    %br/
-    = f.email_field :email, autofocus: true, autocomplete: "email"
-  .field
-    = f.label :password
-    %br/
-    = f.password_field :password, autocomplete: "current-password"
-  - if devise_mapping.rememberable?
-    .field
-      = f.check_box :remember_me
-      = f.label :remember_me
-  .actions
-    = f.submit "Log in"
-= render "devise/shared/links"
+.container
+  .row.justify-content-center.align-items-center{style: "min-height: 70vh;"}
+    .col-md-6.col-lg-5.col-xl-4
+      .card.shadow-lg{style: "border: none; border-radius: 15px; background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);"}
+        .card-body.p-5
+          .text-center.mb-4
+            %h2.fw-bold{style: "color: #4CAF50; font-size: 2rem;"}
+              🔑 ログイン
+            %p.text-muted.mb-0 アカウントにサインインしてください
+
+          = form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
+            .mb-4
+              = f.label :email, "メールアドレス", class: "form-label fw-semibold", style: "color: #555;"
+              = f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control form-control-lg", placeholder: "例: user@example.com", style: "border-radius: 10px; border: 2px solid #e0e0e0; transition: border-color 0.3s;"
+
+            .mb-4
+              = f.label :password, "パスワード", class: "form-label fw-semibold", style: "color: #555;"
+              = f.password_field :password, autocomplete: "current-password", class: "form-control form-control-lg", placeholder: "パスワードを入力", style: "border-radius: 10px; border: 2px solid #e0e0e0; transition: border-color 0.3s;"
+
+            - if devise_mapping.rememberable?
+              .mb-4.form-check
+                = f.check_box :remember_me, class: "form-check-input", style: "cursor: pointer;"
+                = f.label :remember_me, "ログイン状態を保持する", class: "form-check-label", style: "cursor: pointer; color: #666;"
+
+            .d-grid.mb-4
+              = f.submit "ログイン", class: "btn btn-lg", style: "background: linear-gradient(45deg, #4CAF50, #8BC34A); color: white; border: none; border-radius: 10px; font-weight: bold; padding: 12px; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3); transition: transform 0.2s;"
+
+          .text-center
+            = render "devise/shared/links"

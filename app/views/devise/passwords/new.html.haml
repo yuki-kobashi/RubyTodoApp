@@ -1,10 +1,24 @@
-%h2 Forgot your password?
-= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f|
-  = render "devise/shared/error_messages", resource: resource
-  .field
-    = f.label :email
-    %br/
-    = f.email_field :email, autofocus: true, autocomplete: "email"
-  .actions
-    = f.submit "Send me reset password instructions"
-= render "devise/shared/links"
+.container
+  .row.justify-content-center.align-items-center{style: "min-height: 70vh;"}
+    .col-md-6.col-lg-5.col-xl-4
+      .card.shadow-lg{style: "border: none; border-radius: 15px; background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);"}
+        .card-body.p-5
+          .text-center.mb-4
+            %h2.fw-bold{style: "color: #4CAF50; font-size: 2rem;"}
+              🔐 パスワードリセット
+            %p.text-muted.mb-0 パスワードをお忘れですか？
+
+          = form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f|
+            = render "devise/shared/error_messages", resource: resource
+
+            .mb-4
+              = f.label :email, "メールアドレス", class: "form-label fw-semibold", style: "color: #555;"
+              %small.text-muted.d-block.mb-2
+                登録されたメールアドレスにパスワードリセット用のリンクを送信します
+              = f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control form-control-lg", placeholder: "例: user@example.com", style: "border-radius: 10px; border: 2px solid #e0e0e0; transition: border-color 0.3s;"
+
+            .d-grid.mb-4
+              = f.submit "リセットメールを送信", class: "btn btn-lg", style: "background: linear-gradient(45deg, #4CAF50, #8BC34A); color: white; border: none; border-radius: 10px; font-weight: bold; padding: 12px; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3); transition: transform 0.2s;"
+
+          .text-center
+            = render "devise/shared/links"

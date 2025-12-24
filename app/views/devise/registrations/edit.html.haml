@@ -1,36 +1,51 @@
-%h2
-  Edit #{resource_name.to_s.humanize}
-= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f|
-  = render "devise/shared/error_messages", resource: resource
-  .field
-    = f.label :email
-    %br/
-    = f.email_field :email, autofocus: true, autocomplete: "email"
-  - if devise_mapping.confirmable? && resource.pending_reconfirmation?
-    %div
-      Currently waiting confirmation for: #{resource.unconfirmed_email}
-  .field
-    = f.label :password
-    %i (leave blank if you don't want to change it)
-    %br/
-    = f.password_field :password, autocomplete: "new-password"
-    - if @minimum_password_length
-      %br/
-      %em
-        = @minimum_password_length
-        characters minimum
-  .field
-    = f.label :password_confirmation
-    %br/
-    = f.password_field :password_confirmation, autocomplete: "new-password"
-  .field
-    = f.label :current_password
-    %i (we need your current password to confirm your changes)
-    %br/
-    = f.password_field :current_password, autocomplete: "current-password"
-  .actions
-    = f.submit "Update"
-%h3 Cancel my account
-%div
-  Unhappy? #{button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" }, method: :delete}
-= link_to "Back", :back
+.container.py-5
+  .row.justify-content-center
+    .col-md-8.col-lg-6
+      .card.shadow-lg{style: "border: none; border-radius: 15px; background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);"}
+        .card-body.p-5
+          .text-center.mb-4
+            %h2.fw-bold{style: "color: #4CAF50; font-size: 2rem;"}
+              ⚙️ プロフィール編集
+            %p.text-muted.mb-0 アカウント情報を更新
+
+          = form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f|
+            = render "devise/shared/error_messages", resource: resource
+
+            .mb-4
+              = f.label :email, "メールアドレス", class: "form-label fw-semibold", style: "color: #555;"
+              = f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control form-control-lg", style: "border-radius: 10px; border: 2px solid #e0e0e0; transition: border-color 0.3s;"
+              - if devise_mapping.confirmable? && resource.pending_reconfirmation?
+                %small.text-info.d-block.mt-1
+                  確認待ち: #{resource.unconfirmed_email}
+
+            .mb-4
+              = f.label :password, "新しいパスワード", class: "form-label fw-semibold", style: "color: #555;"
+              %small.text-muted.d-block.mb-2
+                変更しない場合は空欄のままにしてください
+                - if @minimum_password_length
+                  （#{@minimum_password_length}文字以上）
+              = f.password_field :password, autocomplete: "new-password", class: "form-control form-control-lg", placeholder: "新しいパスワード", style: "border-radius: 10px; border: 2px solid #e0e0e0; transition: border-color 0.3s;"
+
+            .mb-4
+              = f.label :password_confirmation, "新しいパスワード（確認）", class: "form-label fw-semibold", style: "color: #555;"
+              = f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control form-control-lg", placeholder: "新しいパスワードを再入力", style: "border-radius: 10px; border: 2px solid #e0e0e0; transition: border-color 0.3s;"
+
+            .mb-4
+              = f.label :current_password, "現在のパスワード", class: "form-label fw-semibold", style: "color: #555;"
+              %small.text-muted.d-block.mb-2
+                変更を確認するために現在のパスワードが必要です
+              = f.password_field :current_password, autocomplete: "current-password", class: "form-control form-control-lg", placeholder: "現在のパスワード", style: "border-radius: 10px; border: 2px solid #e0e0e0; transition: border-color 0.3s;"
+
+            .d-grid.mb-3
+              = f.submit "更新", class: "btn btn-lg", style: "background: linear-gradient(45deg, #4CAF50, #8BC34A); color: white; border: none; border-radius: 10px; font-weight: bold; padding: 12px; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3); transition: transform 0.2s;"
+
+          .text-center.mt-3
+            = link_to "← 戻る", :back, class: "text-decoration-none", style: "color: #666;"
+
+      .card.shadow.mt-4{style: "border: none; border-radius: 15px; border-left: 5px solid #dc3545;"}
+        .card-body.p-4
+          %h5.card-title.text-danger.fw-bold.mb-3
+            🗑️ アカウント削除
+          %p.text-muted.mb-3
+            アカウントを削除すると、すべてのデータが失われます。この操作は取り消せません。
+          = button_to "アカウントを削除", registration_path(resource_name), data: { confirm: "本当にアカウントを削除しますか？この操作は取り消せません。", turbo_confirm: "本当にアカウントを削除しますか？この操作は取り消せません。" }, method: :delete, class: "btn btn-danger", style: "border-radius: 10px;"

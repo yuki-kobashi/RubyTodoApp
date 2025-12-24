@@ -13,3 +13,41 @@
  *= require_tree .
  *= require_self
  */
+
+/* フォームフィールドのホバー・フォーカス効果 */
+.form-control:hover {
+  border-color: #8BC34A !important;
+}
+
+.form-control:focus {
+  border-color: #4CAF50 !important;
+  box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.25) !important;
+  outline: none !important;
+}
+
+/* ボタンのホバー効果 */
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4) !important;
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+/* リンクのホバー効果 */
+a.text-decoration-none:hover {
+  text-decoration: underline !important;
+  opacity: 0.8;
+}
+
+/* カードのホバー効果 */
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* チェックボックスのスタイル */
+.form-check-input:checked {
+  background-color: #4CAF50;
+  border-color: #4CAF50;
+}
