@@ -4,6 +4,11 @@
 ARG RUBY_VERSION=3.1.2
 FROM registry.docker.com/library/ruby:$RUBY_VERSION-slim as base
 
+# ベースの Debian 11(bullseye)はサポートが終わり、セキュリティ更新のリポジトリから
+# 一部のパッケージを取得できなくなった(404)ため、apt の取得先から外す。
+# Ruby を上げてベースイメージを新しい Debian にするまでの暫定対応。
+RUN sed -i '/bullseye-security/d' /etc/apt/sources.list
+
 # Rails app lives here
 WORKDIR /rails
 

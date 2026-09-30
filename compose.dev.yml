@@ -1,0 +1,55 @@
+# 開発用の compose ファイル。
+# db:開発・テストで使う MySQL。Rails は Linux 環境で直接動かす(docs/development.md の「開発環境の構築」)。
+# app:Ruby を入れずにコンテナの中で開発する場合だけ使う(docs/development.md)。
+# 使うときは毎回 `-f compose.dev.yml` を付ける。
+name: rubytodoapp-dev
+
+services:
+  db:
+    image: mysql:8.0
+    command:
+      - --default-authentication-plugin=mysql_native_password
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD:?.env に DATABASE_PASSWORD を設定してください}
+    ports:
+      # Linux 環境で動かす Rails から接続する。127.0.0.1 にだけ公開し、ほかのマシンからは接続させない
+      - "127.0.0.1:${DATABASE_PORT:-3306}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      args:
+        UID: ${DEV_UID:-1000}
+        GID: ${DEV_GID:-1000}
+    image: ruby-todo-app:dev
+    # 前回のコンテナが残した PID ファイルがあると起動できないので、消してから起動する
+    command: bash -c "rm -f tmp/pids/server.pid && bin/rails server -b 0.0.0.0"
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_HOST: db
+      DATABASE_PORT: 3306
+      DATABASE_USERNAME: root
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:?.env に DATABASE_PASSWORD を設定してください}
+    volumes:
+      - .:/rails
+    depends_on:
+      db:
+        condition: service_healthy
+    # debug gem のブレークポイントで止めたときに `docker attach` で操作できるようにする
+    stdin_open: true
+    tty: true
+
+volumes:
+  mysql_data:

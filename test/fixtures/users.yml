@@ -1,11 +1,15 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-# This model initially had no columns defined. If you add columns to the
-# model remove the "{}" from the fixture names and add the columns immediately
-# below each fixture, per the syntax in the comments below
-#
-one: {}
-# column: value
-#
-two: {}
-# column: value
+# email には UNIQUE 制約があるので、fixture ごとに別の値を入れる。
+# confirmable が有効なので、ログインできるよう確認済み(confirmed_at あり)にしておく。
+one:
+  name: user_one
+  email: one@example.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, "password") %>
+  confirmed_at: <%= Time.current %>
+
+two:
+  name: user_two
+  email: two@example.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, "password") %>
+  confirmed_at: <%= Time.current %>

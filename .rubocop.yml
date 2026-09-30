@@ -1,0 +1,28 @@
+# RuboCop(Ruby の Linter・Formatter)の設定。
+# 導入時点で既存のコードにあった指摘は .rubocop_todo.yml に記録し、コードは直していない。
+# 新しく書くコードは、すべてのルールで検査される。運用方法は docs/development.md を参照。
+inherit_from: .rubocop_todo.yml
+
+# Exclude は上書きせずに足し合わせる。
+# (上書きすると、.rubocop_todo.yml の Exclude で RuboCop の既定の除外(test/ など)が消えてしまう)
+inherit_mode:
+  merge:
+    - Exclude
+
+plugins:
+  - rubocop-rails
+
+AllCops:
+  TargetRubyVersion: 3.1
+  NewCops: enable
+  # 使っている gem に合わせた拡張(rubocop-capybara など)のおすすめを、実行のたびに表示しない
+  SuggestExtensions: false
+  Exclude:
+    - "bin/**/*"
+    - "db/schema.rb"
+    - "log/**/*"
+    - "node_modules/**/*"
+    - "public/**/*"
+    - "storage/**/*"
+    - "tmp/**/*"
+    - "vendor/**/*"

@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# コミットする Ruby のファイルを RuboCop で検査し、指摘があればコミットを止める。
+#   有効にする:git config core.hooksPath .githooks(bin/setup が自動で行う)
+#   一時的に飛ばす:git commit --no-verify
+set -uo pipefail
+
+# コミットに含まれる(追加・変更された)Ruby のファイル
+mapfile -t files < <(git diff --cached --name-only --diff-filter=ACMR -- '*.rb' '*.rake' Gemfile Rakefile config.ru)
+if [ "${#files[@]}" -eq 0 ]; then
+  exit 0
+fi
+
+echo "pre-commit: RuboCop でコミットするファイルを検査します(${#files[@]} 件)"
+
+# Linux 環境の Ruby で RuboCop を動かせるならそれを使い、
+# 動かせなければ(Ruby を入れずにコンテナで開発している場合)開発用コンテナで実行する
+if bundle exec rubocop --version > /dev/null 2>&1; then
+  bundle exec rubocop --force-exclusion --format quiet "${files[@]}"
+else
+  docker compose -f compose.dev.yml run --rm --no-deps -T app bundle exec rubocop --force-exclusion --format quiet "${files[@]}"
+fi
+status=$?
+
+if [ "$status" -ne 0 ]; then
+  echo >&2
+  echo "pre-commit: RuboCop の指摘があるため、コミットを中止しました。" >&2
+  echo "  bundle exec rubocop -a で直せるものもあります。直したら git add してからコミットし直してください。" >&2
+  echo "  一時的に検査を飛ばすときは git commit --no-verify を使います。" >&2
+  exit 1
+fi
+echo "pre-commit: RuboCop の指摘はありませんでした"

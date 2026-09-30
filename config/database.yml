@@ -15,10 +15,11 @@ default: &default
   charset: utf8mb4                     
   collation: utf8mb4_unicode_ci        
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: root
-  password: password
-  host: 127.0.0.1
-  port: 3306
+  # 接続情報は環境変数から読む(一覧と既定値は README の「設定(環境変数)」を参照)
+  host: <%= ENV.fetch("DATABASE_HOST", "127.0.0.1") %>
+  port: <%= ENV.fetch("DATABASE_PORT", 3306) %>
+  username: <%= ENV.fetch("DATABASE_USERNAME", "root") %>
+  password: <%= ENV["DATABASE_PASSWORD"] %>
   # 接続時の文字セット設定を明示的に指定 
   variables:                           
     character_set_client: utf8mb4     
@@ -60,5 +61,4 @@ test:
 production:
   <<: *default
   database: ruby_todo_app_production
-  username: ruby_todo_app
-  password: <%= ENV["RUBY_TODO_APP_DATABASE_PASSWORD"] %>
+  username: <%= ENV.fetch("DATABASE_USERNAME", "ruby_todo_app") %>

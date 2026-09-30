@@ -49,7 +49,8 @@ Rails.application.configure do
   # config.assume_ssl = true
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = true
+  # 既定は有効。compose.yml のように http://localhost で開くときは RAILS_FORCE_SSL=false にする。
+  config.force_ssl = ENV.fetch("RAILS_FORCE_SSL", "true") == "true"
 
   # Log to STDOUT by default
   config.logger = ActiveSupport::Logger.new(STDOUT)
@@ -72,6 +73,24 @@ Rails.application.configure do
   # config.active_job.queue_name_prefix = "ruby_todo_app_production"
 
   config.action_mailer.perform_caching = false
+
+  # 確認メールなどに載せるリンクの URL(APP_HOST にアプリの公開ホスト名を指定する)
+  config.action_mailer.default_url_options = {
+    host: ENV.fetch("APP_HOST", "localhost"),
+    port: ENV.fetch("APP_PORT", nil),
+    protocol: config.force_ssl ? "https" : "http"
+  }.compact
+
+  # メールを送る SMTP サーバー。SMTP_ADDRESS が未設定なら Rails の既定(localhost:25)のまま。
+  if ENV["SMTP_ADDRESS"].present?
+    config.action_mailer.delivery_method = :smtp
+    config.action_mailer.smtp_settings = {
+      address: ENV["SMTP_ADDRESS"],
+      port: Integer(ENV.fetch("SMTP_PORT", 587)),
+      user_name: ENV.fetch("SMTP_USERNAME", nil),
+      password: ENV.fetch("SMTP_PASSWORD", nil)
+    }.compact
+  end
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.

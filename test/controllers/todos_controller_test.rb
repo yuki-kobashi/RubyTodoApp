@@ -1,8 +1,11 @@
 require "test_helper"
 
 class TodosControllerTest < ActionDispatch::IntegrationTest
+  include Devise::Test::IntegrationHelpers
+
   test "should get index" do
-    get todos_index_url
+    sign_in users(:one)
+    get todos_url
     assert_response :success
   end
 end

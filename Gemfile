@@ -56,6 +56,9 @@ gem 'sass-rails'
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mswin mswin64 mingw x64_mingw ]
+
+  # .env を環境変数として読み込む(コンテナを使わずに Rails を動かすとき用)
+  gem "dotenv-rails"
 end
 
 group :development do
@@ -72,6 +75,12 @@ group :development do
 
   gem 'letter_opener'
   gem 'letter_opener_web'
+
+  # Linter・Formatter(設定は .rubocop.yml)
+  gem "rubocop", require: false
+  gem "rubocop-rails", require: false
+  # rubocop が依存する json は 3 未満にする(json 3 は Rails 7.1 の ActiveSupport と組み合わせるとエラーになる)
+  gem "json", "< 3"
 end
 
 group :test do

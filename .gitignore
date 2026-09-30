@@ -10,6 +10,8 @@
 # Ignore all environment files (except templates).
 /.env*
 !/.env*.erb
+# 環境変数の見本は管理する
+!/.env.example
 
 # Ignore all logfiles and tempfiles.
 /log/*
@@ -33,3 +35,15 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+
+# OS が作るファイル(macOS / Windows)
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# エディタ・IDE が作るファイル
+/.idea/
+/.vscode/
+*.swp
+*.swo
+*~
