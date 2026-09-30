@@ -33,3 +33,15 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+
+# OS が作るファイル(macOS / Windows)
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# エディタ・IDE が作るファイル
+/.idea/
+/.vscode/
+*.swp
+*.swo
+*~
