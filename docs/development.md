@@ -11,6 +11,7 @@
 - [よく使うコマンド](#よく使うコマンド)
 - [テスト](#テスト)
 - [Lint・フォーマット(RuboCop)](#lintフォーマットrubocop)
+- [コミット時の自動チェック(pre-commit フック)](#コミット時の自動チェックpre-commit-フック)
 - [DB を作り直す](#db-を作り直す)
 - [メールを確認する](#メールを確認する)
 - [gem を追加・更新する](#gem-を追加更新する)
@@ -66,7 +67,7 @@
    docker compose -f compose.dev.yml up -d --wait db
    ```
 
-6. gem のインストールと DB の作成・マイグレーションを行います。初回は gem のコンパイルに数分かかります。
+6. gem のインストールと DB の作成・マイグレーションを行い、コミット時に RuboCop を実行する [pre-commit フック](#コミット時の自動チェックpre-commit-フック)を有効にします。初回は gem のコンパイルに数分かかります。
 
    ```bash
    bin/setup
@@ -147,6 +148,22 @@ RuboCop を導入した時点で既存のコードにあった指摘は、`.rubo
 bundle exec rubocop --auto-gen-config --no-exclude-limit --no-auto-gen-timestamp
 ```
 
+## コミット時の自動チェック(pre-commit フック)
+
+`git commit` のたびに、コミットする Ruby のファイルを RuboCop で検査し、指摘があればコミットを止めます(`.githooks/pre-commit`)。
+
+`bin/setup` を実行すると有効になります。手で有効にするときは、次のコマンドを実行します。
+
+```bash
+git config core.hooksPath .githooks
+```
+
+- 検査するのは、コミットに含まれる Ruby のファイル(`*.rb`、`*.rake`、`Gemfile` など)だけです。Ruby のファイルがなければ何もしません
+- 指摘が出たら直し(`bundle exec rubocop -a` で直せるものもある)、`git add` し直してからコミットします
+- 一時的に検査を飛ばすときは `git commit --no-verify` を使います
+- Ruby を入れずにコンテナで開発している場合は、開発用コンテナの中で RuboCop を実行します(先に `docker compose -f compose.dev.yml build` が必要)
+- 検査するのは作業中のファイルの内容です。ファイルの一部だけを `git add` した場合は、コミットしない部分も含めて検査されます
+
 ## DB を作り直す
 
 データを消して最初からやり直すときは、ボリュームごと消してから `bin/setup` を実行します。
@@ -205,7 +222,7 @@ Linux 環境に Ruby を入れたくない場合は、`compose.dev.yml` の app 
 # イメージを作る(Gemfile を変えたときも実行する)
 docker compose -f compose.dev.yml build
 
-# gem の確認と DB の作成・マイグレーション
+# gem の確認、DB の作成・マイグレーション、pre-commit フックの有効化
 docker compose -f compose.dev.yml run --rm app bin/setup
 
 # サーバーを起動する(http://localhost:3000)

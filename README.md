@@ -53,8 +53,9 @@ Linux 環境(Windows では WSL2)で動かす前提です。手順は WSL2 の U
 | `bin/docker-entrypoint` | 本番用イメージの起動時に DB の作成・マイグレーションを行う |
 | `.env.example` | 環境変数の見本。`.env` にコピーして使う |
 | `compose.dev.yml`・`Dockerfile.dev` | 開発用。開発・テストで使う MySQL などを起動する([開発ガイド](docs/development.md)) |
-| `bin/setup` | 開発環境のセットアップ(gem のインストール、DB の作成・マイグレーション) |
+| `bin/setup` | 開発環境のセットアップ(gem のインストール、DB の作成・マイグレーション、git のフックの有効化) |
 | `.rubocop.yml`・`.rubocop_todo.yml` | RuboCop(Linter・Formatter)の設定と、導入時点の指摘の記録 |
+| `.githooks/pre-commit` | コミット時に RuboCop を実行する git のフック(`bin/setup` で有効になる) |
 | `.gitignore`・`.dockerignore` | Git の管理・Docker のビルドから外すファイル |
 | `.gitattributes`・`.editorconfig` | 改行コード(LF)などの統一 |
 | `docs/development.md` | 開発ガイド |
@@ -186,6 +187,7 @@ WSL2 の Ubuntu を使います。
 - [開発環境の構築](docs/development.md#開発環境の構築):rbenv で Ruby 3.1.2 を入れて Rails を動かし、MySQL は `compose.dev.yml` で起動する
 - [テスト](docs/development.md#テスト):`bin/rails test`
 - [Lint・フォーマット](docs/development.md#lintフォーマットrubocop):`bundle exec rubocop`
+- [コミット時の自動チェック](docs/development.md#コミット時の自動チェックpre-commit-フック):`bin/setup` で有効になる pre-commit フックが RuboCop を実行する
 - [よく使うコマンド](docs/development.md#よく使うコマンド)、[DB の作り直し](docs/development.md#db-を作り直す)、[gem の追加](docs/development.md#gem-を追加更新する)
 - [Ruby を入れずにコンテナで開発する方法](docs/development.md#ruby-を入れずにコンテナで開発する)
 
