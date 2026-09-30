@@ -1,5 +1,6 @@
 # 開発用の compose ファイル。
 # db:開発・テストで使う MySQL。Rails は Linux 環境で直接動かす(docs/development.md の「開発環境の構築」)。
+# app:Ruby を入れずにコンテナの中で開発する場合だけ使う(docs/development.md)。
 # 使うときは毎回 `-f compose.dev.yml` を付ける。
 name: rubytodoapp-dev
 
@@ -23,6 +24,32 @@ services:
       timeout: 5s
       retries: 20
       start_period: 30s
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      args:
+        UID: ${DEV_UID:-1000}
+        GID: ${DEV_GID:-1000}
+    image: ruby-todo-app:dev
+    # 前回のコンテナが残した PID ファイルがあると起動できないので、消してから起動する
+    command: bash -c "rm -f tmp/pids/server.pid && bin/rails server -b 0.0.0.0"
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_HOST: db
+      DATABASE_PORT: 3306
+      DATABASE_USERNAME: root
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:?.env に DATABASE_PASSWORD を設定してください}
+    volumes:
+      - .:/rails
+    depends_on:
+      db:
+        condition: service_healthy
+    # debug gem のブレークポイントで止めたときに `docker attach` で操作できるようにする
+    stdin_open: true
+    tty: true
 
 volumes:
   mysql_data:

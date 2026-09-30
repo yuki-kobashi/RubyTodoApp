@@ -1,0 +1,33 @@
+# syntax = docker/dockerfile:1
+
+# Ruby を入れずにコンテナの中で開発する場合のイメージ(compose.dev.yml の app から使う)。
+# 本番用の Dockerfile と違い、ソースはイメージに入れずにマウントし、
+# development / test グループの gem も入れる。
+ARG RUBY_VERSION=3.1.2
+FROM docker.io/library/ruby:$RUBY_VERSION-slim
+
+# セキュリティ更新のリポジトリを外す理由は Dockerfile と同じ(Debian 11 のサポート終了)
+RUN sed -i '/bullseye-security/d' /etc/apt/sources.list
+
+# gem のビルドと bin/rails dbconsole に必要なパッケージ
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y build-essential default-libmysqlclient-dev default-mysql-client git pkg-config && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+# マウントしたソースの中に作られるファイル(log/ や tmp/ など)が root の持ち物にならないよう、一般ユーザーで動かす。
+# Linux でホストの UID・GID が 1000 以外なら、.env の DEV_UID・DEV_GID で合わせる。
+ARG UID=1000
+ARG GID=1000
+RUN groupadd --non-unique --gid "$GID" rails && \
+    useradd --non-unique --uid "$UID" --gid "$GID" --create-home --shell /bin/bash rails
+
+WORKDIR /rails
+RUN chown rails:rails /rails
+USER rails
+
+# gem はイメージに入れておく。Gemfile を変えたら `docker compose -f compose.dev.yml build` で作り直す。
+COPY --chown=rails:rails Gemfile Gemfile.lock ./
+RUN bundle install
+
+EXPOSE 3000
+CMD ["bin/rails", "server", "-b", "0.0.0.0"]
