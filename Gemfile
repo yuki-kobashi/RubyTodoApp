@@ -75,6 +75,12 @@ group :development do
 
   gem 'letter_opener'
   gem 'letter_opener_web'
+
+  # Linter・Formatter(設定は .rubocop.yml)
+  gem "rubocop", require: false
+  gem "rubocop-rails", require: false
+  # rubocop が依存する json は 3 未満にする(json 3 は Rails 7.1 の ActiveSupport と組み合わせるとエラーになる)
+  gem "json", "< 3"
 end
 
 group :test do
