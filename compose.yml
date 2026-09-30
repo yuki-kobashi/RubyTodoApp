@@ -1,0 +1,69 @@
+# ローカル実行用の compose ファイル。
+# 本番用の Dockerfile でアプリのイメージを作り、MySQL・Mailpit と一緒に起動する。
+# ホストに Ruby がなくても `docker compose up` だけでアプリを試せる。
+# ソースを編集しながら開発するときは compose.dev.yml を使う(docs/development.md 参照)。
+# 以前の docker-compose.yml(プロジェクト名 rubytodoapp)の DB のボリュームと混ざらないよう、別の名前にする
+name: rubytodoapp-local
+
+services:
+  app:
+    build: .
+    image: ruby-todo-app:local
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_HOST: db
+      DATABASE_PORT: 3306
+      DATABASE_USERNAME: ruby_todo_app
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:?.env に DATABASE_PASSWORD を設定してください}
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:?.env に SECRET_KEY_BASE を設定してください(作り方は .env.example を参照)}
+      # http://localhost で開くので HTTPS の強制を切る(本番では設定しない)
+      RAILS_FORCE_SSL: "false"
+      # 確認メールのリンク先と、メールの送り先(Mailpit)
+      APP_HOST: localhost
+      APP_PORT: 3000
+      SMTP_ADDRESS: mailpit
+      SMTP_PORT: 1025
+      # ローカルで試すだけなので、Puma はワーカープロセスを作らない(シングルモード)で動かす
+      WEB_CONCURRENCY: 0
+    depends_on:
+      db:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://localhost:3000/users/sign_in"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+  db:
+    image: mysql:8.0
+    command:
+      - --default-authentication-plugin=mysql_native_password
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    environment:
+      # root は使わないので、パスワードは起動のたびに乱数で作らせる
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+      MYSQL_DATABASE: ruby_todo_app_production
+      MYSQL_USER: ruby_todo_app
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD:?.env に DATABASE_PASSWORD を設定してください}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  # アプリが送ったメールを受け取り、http://localhost:8025 で見られるようにする
+  mailpit:
+    image: axllent/mailpit:v1.31.3
+    ports:
+      - "8025:8025"
+
+volumes:
+  mysql_data:
